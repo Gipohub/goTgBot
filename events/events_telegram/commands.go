@@ -18,6 +18,7 @@ const (
 	HelpCmd  = "/help"
 	StartCmd = "/start"
 	Parser   = "/pars"
+	ListCmd  = "/list"
 
 	//huinya = context.Background()
 )
@@ -45,9 +46,13 @@ func (p *Processor) doCmd(text string, chatID int, username string) error {
 		fmt.Println("start msg")
 
 		return p.SendHello(chatID)
-	case Parser:
-		fmt.Println("pars msg")
-		return p.SendParsRes(chatID)
+	case ListCmd:
+		fmt.Println("list msg")
+		return p.SendList(chatID, username)
+	//case Parser:
+	//	fmt.Println("pars msg")
+	//	return p.SendParsRes(chatID)
+
 	default:
 		fmt.Println("unknown msg")
 		return p.tg.SendMesages(chatID, msgUnknownCommand)
@@ -94,7 +99,26 @@ func (p *Processor) SendRandom(chatID int, username string) (err error) {
 	if err := p.tg.SendMesages(chatID, page.URL); err != nil {
 		return err
 	}
-	return p.storage.Remove(context.Background(), page)
+	return err //p.storage.Remove(context.Background(), page)
+}
+
+func (p *Processor) SendList(chatID int, username string) (err error) {
+	defer func() { err = e.Wrap("cant do command:cant send list", err) }()
+
+	pages, err := p.storage.PickAllList(context.Background(), username)
+	if err != nil && !errors.Is(err, storage.ErrNoSavedPages) {
+
+		return err
+	}
+	if errors.Is(err, storage.ErrNoSavedPages) {
+		return p.tg.SendMesages(chatID, msgNoSavedPages)
+	}
+	for _, page := range pages {
+		if err := p.tg.SendMesages(chatID, page.URL); err != nil {
+			return err
+		}
+	}
+	return err //p.storage.Remove(context.Background(), page)
 }
 
 func (p *Processor) SendHelp(chatID int) error {

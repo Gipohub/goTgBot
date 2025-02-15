@@ -68,6 +68,40 @@ func (s *Storage) PickRandom(ctx context.Context, userName string) (*storage.Pag
 	}, nil //craft page object, and nil error
 }
 
+// PickRandom picks pages from storage in random order.
+func (s *Storage) PickAllList(ctx context.Context, userName string) ([]*storage.Page, error) {
+	q := `SELECT url FROM pages WHERE user_name = ? ORDER BY RANDOM()`
+
+	rows, err := s.db.QueryContext(ctx, q, userName)
+	if err != nil {
+		return nil, e.Wrap(PickPageErr, err)
+	}
+	defer rows.Close()
+
+	var pages []*storage.Page
+
+	for rows.Next() {
+		var url string
+		if err := rows.Scan(&url); err != nil {
+			return nil, e.Wrap(PickPageErr, err)
+		}
+		pages = append(pages, &storage.Page{
+			URL:      url,
+			UserName: userName,
+		})
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, e.Wrap(PickPageErr, err)
+	}
+
+	if len(pages) == 0 {
+		return nil, storage.ErrNoSavedPages
+	}
+
+	return pages, nil
+}
+
 // Remove removes page from storage.
 func (s *Storage) Remove(ctx context.Context, page *storage.Page) error {
 	q := `DELETE FROM pages WHERE url = ? AND user_name = ?`
