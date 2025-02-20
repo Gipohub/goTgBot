@@ -4,6 +4,7 @@ import (
 	"context"
 	"flag"
 	"log"
+	"path/filepath"
 
 	//"context"
 	"github.com/Gipohub/goTgBot/clients/tgClient"
@@ -15,12 +16,16 @@ import (
 const (
 	tgBotHost = "api.telegram.org"
 	//storagePath = "storage"
-	sqliteStoragePath = `data/sqlite/base.db`
-	batchSize         = 100
+	batchSize = 100
+)
+const (
+	dataBasePathPart1 = "data"
+	dataBasePathPart2 = "sqlite"
+	filename          = "base.db"
 )
 
 func main() {
-
+	sqliteStoragePath := filepath.Join(dataBasePathPart1, dataBasePathPart2, filename)
 	//tgClient := tgClient.New(tgBotHost, mustToken())
 	s, err := sqlite.New(sqliteStoragePath)
 	if err != nil {
