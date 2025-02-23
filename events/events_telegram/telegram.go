@@ -54,7 +54,6 @@ func (p *Processor) Fetch(limit int) ([]events.Event, error) {
 	}
 
 	p.offset = updates[len(updates)-1].ID + 1
-	fmt.Println(p.offset)
 	return res, nil
 }
 
@@ -71,7 +70,7 @@ func (p *Processor) Process(event events.Event) error {
 func (p *Processor) processMessage(event events.Event) error {
 	meta, err := meta(event)
 	if err != nil {
-		return e.Wrap("cnt prcss msg", ErrUnknownMetaType)
+		return err
 	}
 
 	if err := p.doCmd(event.Text, meta.ChatID, meta.UserName); err != nil {

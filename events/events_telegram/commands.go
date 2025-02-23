@@ -19,6 +19,7 @@ const (
 	StartCmd = "/start"
 	Parser   = "/pars"
 	ListCmd  = "/list"
+	Exit     = "/exit"
 
 	//huinya = context.Background()
 )
@@ -52,6 +53,15 @@ func (p *Processor) doCmd(text string, chatID int, username string) error {
 	//case Parser:
 	//	fmt.Println("pars msg")
 	//	return p.SendParsRes(chatID)
+	case Exit:
+		fmt.Println("exit msg")
+		if p.isOwner(username) {
+			if err := p.tg.SendMesages(chatID, msgTurnedOff); err != nil {
+				return err
+			}
+			log.Fatal("service is stopped")
+		}
+		return p.tg.SendMesages(chatID, msgAccessDenied)
 
 	default:
 		fmt.Println("unknown msg")
@@ -131,6 +141,10 @@ func (p *Processor) SendHello(chatID int) error {
 func (p *Processor) SendParsRes(chatID int) error {
 	ytClient.Pars()
 	return p.tg.SendMesages(chatID, "pars")
+}
+
+func (p *Processor) isOwner(username string) bool {
+	return p.tg.GetOwner() == username
 }
 
 func isSaveCmd(text string) bool {

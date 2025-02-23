@@ -27,20 +27,21 @@ const (
 func main() {
 	sqliteStoragePath := filepath.Join(dataBasePathPart1, dataBasePathPart2, filename)
 	//tgClient := tgClient.New(tgBotHost, mustToken())
-	s, err := sqlite.New(sqliteStoragePath)
+	sqliteStorage, err := sqlite.New(sqliteStoragePath)
 	if err != nil {
 		log.Fatal("cant connect storage", err)
 	}
 
-	err = s.Init(context.TODO())
+	err = sqliteStorage.Init(context.TODO())
 	if err != nil {
 		log.Fatal("can't init storage: ", err)
 	}
 
+	token, owner := mustToken()
+
 	eventsProcessor := events_telegram.New(
-		tgClient.New(tgBotHost, mustToken()),
-		s,
-		//files.New(storagePath),
+		tgClient.New(tgBotHost, token, owner),
+		sqliteStorage,
 	)
 
 	log.Print("service started")
@@ -55,11 +56,16 @@ func main() {
 // приставка маст говорит о том,
 // что функция должна завершаться успешно и,
 // если это не так, вызывается падение
-func mustToken() string {
+func mustToken() (string, string) {
 	token := flag.String(
 		"tg-bot-token",
 		"",
 		"token for access to telegram bot",
+	)
+	owner := flag.String(
+		"tg-bot-owner",
+		"",
+		"owner name for access to bot owner commands",
 	)
 
 	flag.Parse()
@@ -68,5 +74,9 @@ func mustToken() string {
 		log.Fatal("token is not specified")
 	}
 
-	return *token
+	if *owner == "" {
+		log.Fatal("owner is not specified")
+	}
+
+	return *token, *owner
 }

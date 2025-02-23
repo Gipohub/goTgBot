@@ -15,6 +15,7 @@ import (
 type Client struct {
 	host     string
 	basePath string
+	owner    string
 	client   http.Client
 }
 
@@ -24,10 +25,11 @@ const (
 	sendMessageMethod = "sendMessage"
 )
 
-func New(host string, token string) *Client {
+func New(host string, token string, owner string) *Client {
 	return &Client{
 		host:     host,
 		basePath: newBasePath(token),
+		owner:    owner,
 		client:   http.Client{},
 	}
 }
@@ -73,6 +75,10 @@ func (c *Client) SendMesages(chatID int, text string) error {
 	}
 
 	return nil
+}
+
+func (c *Client) GetOwner() string {
+	return c.owner
 }
 
 // код для отправки запроса аналогичен, поэтому отдельно

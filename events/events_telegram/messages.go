@@ -9,4 +9,6 @@ const (
 	msgSaved          = "Saved"
 	msgNoSavedPages   = "have no Saved pages"
 	msgAlreadyExists  = "You have already this page in your list"
+	msgAccessDenied   = "insufficient access rights"
+	msgTurnedOff      = "turnOff"
 )

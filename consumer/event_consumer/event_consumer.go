@@ -1,6 +1,7 @@
 package event_consumer
 
 import (
+	"fmt"
 	"log"
 	"time"
 
@@ -38,7 +39,9 @@ func (c Consumer) Start() error {
 
 		if err := c.handleEvents(gotEvents); err != nil {
 			log.Print(err)
-
+			if err.Error() == "cant handle event: cnt prcss mssage: Exit" {
+				return err
+			}
 			continue
 		}
 		time.Sleep(1 * time.Second)
@@ -51,6 +54,7 @@ func (c *Consumer) handleEvents(events []events.Event) error {
 
 		if err := c.processor.Process(event); err != nil {
 			log.Printf("cant handle event: %s", err.Error())
+			fmt.Println(err.Error(), "ffasf")
 		}
 	}
 	return nil
