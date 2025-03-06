@@ -132,7 +132,9 @@ func (p *Processor) SendList(chatID int, username string) (err error) {
 }
 
 func (p *Processor) SendHelp(chatID int) error {
-	return p.tg.SendMesages(chatID, msgHelp)
+	//return p.tg.SendMesages(chatID, msgHelp)
+
+	return p.tg.SendButtons(chatID, map[string]string{"send random": "/rnd", "send list": "/list", "exit": "/exit"}, 1)
 }
 func (p *Processor) SendHello(chatID int) error {
 	return p.tg.SendMesages(chatID, msgHello)

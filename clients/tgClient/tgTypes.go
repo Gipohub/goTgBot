@@ -32,3 +32,16 @@ type From struct {
 type Chat struct {
 	ID int `json:"id"`
 }
+
+type ResponseMessage struct {
+}
+
+// Структура для inline-кнопок
+type InlineKeyboard struct {
+	RowsKeyboard [][]InlineKeyboardButton `json:"inline_keyboard"`
+}
+
+type InlineKeyboardButton struct {
+	Text         string `json:"text"`
+	CallbackData string `json:"callback_data"`
+}

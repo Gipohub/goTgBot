@@ -76,6 +76,41 @@ func (c *Client) SendMesages(chatID int, text string) error {
 	return nil
 }
 
+func (c *Client) SendButtons(chatID int, buttonsTextAndCallback map[string]string, rangeLines int) error {
+	if len(buttonsTextAndCallback) == 0 {
+		return e.WrapNew("no buttons provided")
+	}
+
+	var buttons InlineKeyboard
+	buttonsLine := make([]InlineKeyboardButton, rangeLines)
+	i := 0
+
+	for text, callback := range buttonsTextAndCallback {
+
+		buttonsLine[i] = InlineKeyboardButton{Text: text, CallbackData: callback}
+		if i == rangeLines-1 {
+			buttons.RowsKeyboard = append(buttons.RowsKeyboard, buttonsLine)
+		}
+	}
+
+	replyMarkup, err := json.Marshal(buttons)
+	if err != nil {
+		return e.Wrap("failed to marshal buttons: %w", err)
+	}
+
+	q := url.Values{}
+	q.Add("chat_id", strconv.Itoa(chatID))
+	q.Add("text", "buttonsTextAndCallback")
+	q.Add("reply_markup", string(replyMarkup))
+
+	_, err = c.doRequest(sendMessageMethod, q)
+	if err != nil {
+		return e.Wrap("cant send message", err)
+	}
+
+	return nil
+}
+
 func (c *Client) GetOwner() string {
 	return c.owner
 }

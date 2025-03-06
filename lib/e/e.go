@@ -9,3 +9,7 @@ func Wrap(msg string, err error) error {
 	}
 	return fmt.Errorf("%s: %w", msg, err)
 }
+func WrapNew(msg string) error {
+
+	return fmt.Errorf("handmade err: %s", msg)
+}
