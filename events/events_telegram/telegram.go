@@ -41,11 +41,12 @@ func (p *Processor) Fetch(limit int) ([]events.Event, error) {
 	if err != nil {
 		return nil, e.Wrap("can't get events", err)
 	}
-	fmt.Println(updates, "events_telegram;p.Fetch")
-	//если нет то завершаем
-	if len(updates) == 0 {
+	if len(updates) != 0 {
+		fmt.Println("get some updates: ", updates, "events_telegram;p.Fetch")
+	} else { //если updates нет то завершаем
 		return nil, nil
 	}
+
 	//алоцируем память для переменной результата
 	res := make([]events.Event, 0, len(updates))
 	//апдейты в эвенты
@@ -61,6 +62,8 @@ func (p *Processor) Fetch(limit int) ([]events.Event, error) {
 func (p *Processor) Process(event events.Event) error {
 	switch event.Type {
 	case events.Message:
+		return p.processMessage(event)
+	case events.Callback:
 		return p.processMessage(event)
 	default:
 		return e.Wrap("cant process mesage", ErrUnknownEventType)
@@ -93,7 +96,7 @@ func event(upd tgClient.Update) events.Event {
 
 	res := events.Event{
 		Type: updType,
-		Text: fetchText(upd),
+		Text: fetchText(updType, upd),
 	}
 
 	if updType == events.Message {
@@ -102,17 +105,33 @@ func event(upd tgClient.Update) events.Event {
 			UserName: upd.Message.From.Username,
 		}
 	}
+	if updType == events.Callback {
+		res.Meta = Meta{
+			ChatID:   upd.Callback.Message.Chat.ID,
+			UserName: upd.Callback.From.Username,
+		}
+		fmt.Println(res)
+	}
 	return res
 }
-func fetchText(upd tgClient.Update) string {
-	if upd.Message == nil {
+func fetchText(updType events.Type, upd tgClient.Update) string {
+	switch updType {
+	//case 0: return ""
+	case 1:
+		return upd.Message.Text
+	case 2:
+		return upd.Callback.Data
+	default:
 		return ""
 	}
-	return upd.Message.Text
 }
 func fetchType(upd tgClient.Update) events.Type {
+
 	if upd.Message == nil {
-		return events.Unknown
+		if upd.Callback == nil {
+			return events.Unknown
+		}
+		return events.Callback
 	}
 	return events.Message
 }

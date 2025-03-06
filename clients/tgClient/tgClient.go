@@ -77,19 +77,25 @@ func (c *Client) SendMesages(chatID int, text string) error {
 }
 
 func (c *Client) SendButtons(chatID int, buttonsTextAndCallback map[string]string, rangeLines int) error {
-	if len(buttonsTextAndCallback) == 0 {
+	count := len(buttonsTextAndCallback)
+	if count == 0 {
 		return e.WrapNew("no buttons provided")
 	}
 
 	var buttons InlineKeyboard
 	buttonsLine := make([]InlineKeyboardButton, rangeLines)
 	i := 0
+	//for i := count; i > 0; i -= rangeLines {
+
+	//}
 
 	for text, callback := range buttonsTextAndCallback {
 
 		buttonsLine[i] = InlineKeyboardButton{Text: text, CallbackData: callback}
 		if i == rangeLines-1 {
+
 			buttons.RowsKeyboard = append(buttons.RowsKeyboard, buttonsLine)
+			buttonsLine = make([]InlineKeyboardButton, rangeLines)
 		}
 	}
 

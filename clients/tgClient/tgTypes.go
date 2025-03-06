@@ -13,7 +13,8 @@ type Update struct {
 	//поле составное, содержит лишь некоторые,
 	//необходимые сейчас поля обьекта
 	//фром от кого, чат для обратной отправки, текст команды и ссылки
-	Message *IncomingMessage `json:"message"`
+	Message  *IncomingMessage `json:"message"`
+	Callback *CallbackQuery   `json:"callback_query"`
 }
 
 // входящее сообщение а не отправленное нами
@@ -33,8 +34,20 @@ type Chat struct {
 	ID int `json:"id"`
 }
 
-type ResponseMessage struct {
+type CallbackQuery struct {
+	From    From    `json:"from"`
+	Message Message `json:"message"`
+	Data    string  `json:"data"`
 }
+
+type Message struct {
+	Chat Chat `json:"chat"`
+}
+
+//type CallbackFrom struct {
+//	ID       int    `json:"id"`
+//	UserName string `json:"username"`
+//}
 
 // Структура для inline-кнопок
 type InlineKeyboard struct {
