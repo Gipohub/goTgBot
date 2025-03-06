@@ -2,7 +2,6 @@ package tgClient
 
 import (
 	"encoding/json"
-	"fmt"
 	"io"
 	"net/http"
 	"net/url"
@@ -65,7 +64,7 @@ func (c *Client) Updates(offset int, limit int) (updates []Update, err error) {
 // берем первые два поля в сенд месседж методе телеги chat_id и text
 func (c *Client) SendMesages(chatID int, text string) error {
 	q := url.Values{}
-	fmt.Println(chatID)
+	//fmt.Println(chatID)
 	q.Add("chat_id", strconv.Itoa(chatID))
 	q.Add("text", text)
 
