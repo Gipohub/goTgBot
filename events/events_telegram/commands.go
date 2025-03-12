@@ -20,8 +20,6 @@ const (
 	Parser   = "/pars"
 	ListCmd  = "/list"
 	Exit     = "/exit"
-
-	//huinya = context.Background()
 )
 
 func (p *Processor) doCmd(text string, chatID int, username string) error {
@@ -132,9 +130,13 @@ func (p *Processor) SendList(chatID int, username string) (err error) {
 }
 
 func (p *Processor) SendHelp(chatID int) error {
-	//return p.tg.SendMesages(chatID, msgHelp)
+	var err error
+	if err = p.tg.SendMesages(chatID, msgHelp); err == nil {
+		return p.tg.SendButtons(chatID, map[string]string{"send random": "/rnd", "sasend random": "/rnd", "ssend random": "/rnd", "send list": "/list", "exit": "/exit"}, 2)
 
-	return p.tg.SendButtons(chatID, map[string]string{"send random": "/rnd", "send list": "/list", "exit": "/exit"}, 1)
+	}
+	return err
+
 }
 func (p *Processor) SendHello(chatID int) error {
 	return p.tg.SendMesages(chatID, msgHello)

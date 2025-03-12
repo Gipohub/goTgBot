@@ -44,6 +44,7 @@ func (p *Processor) Fetch(limit int) ([]events.Event, error) {
 	if len(updates) != 0 {
 		fmt.Println("get some updates: ", updates, "events_telegram;p.Fetch")
 	} else { //если updates нет то завершаем
+		fmt.Print("`")
 		return nil, nil
 	}
 

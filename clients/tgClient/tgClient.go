@@ -2,6 +2,7 @@ package tgClient
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 	"net/url"
@@ -84,12 +85,13 @@ func (c *Client) SendButtons(chatID int, buttonsTextAndCallback map[string]strin
 
 	var buttons InlineKeyboard
 	buttonsLine := make([]InlineKeyboardButton, rangeLines)
+	fmt.Println(buttonsLine)
 	i := 0
-	//for i := count; i > 0; i -= rangeLines {
-
-	//}
 
 	for text, callback := range buttonsTextAndCallback {
+		for i := count; i > 0; i -= rangeLines {
+
+		}
 
 		buttonsLine[i] = InlineKeyboardButton{Text: text, CallbackData: callback}
 		if i == rangeLines-1 {
