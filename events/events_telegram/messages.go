@@ -1,6 +1,6 @@
 package events_telegram
 
-const msgHelp = `insert URL to save, pick randon (/????) to get some link`
+const msgHelp = `insert URL to save, pick randon (/????) to get some link or push the button`
 
 const msgHello = "Hi there \n\n" + msgHelp
 

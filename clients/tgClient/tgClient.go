@@ -2,7 +2,6 @@ package tgClient
 
 import (
 	"encoding/json"
-	"fmt"
 	"io"
 	"net/http"
 	"net/url"
@@ -77,38 +76,34 @@ func (c *Client) SendMesages(chatID int, text string) error {
 	return nil
 }
 
-func (c *Client) SendButtons(chatID int, buttonsTextAndCallback map[string]string, rangeLines int) error {
+// construct and send the message to chatID user, with topMessage text on the top of message,
+// buttonsTextAndCallback button by button,
+// and rangeLines is a sequence of numbers for the number of buttons in a row
+func (c *Client) SendButtons(chatID int, topMessage string, buttonsTextAndCallback []InlineButton, rangeLines []int) error {
 	count := len(buttonsTextAndCallback)
 	if count == 0 {
 		return e.WrapNew("no buttons provided")
 	}
 
-	var buttons InlineKeyboard
-	buttonsLine := make([]InlineKeyboardButton, rangeLines)
-	fmt.Println(buttonsLine)
+	var result InlineKeyboard
 	i := 0
-
-	for text, callback := range buttonsTextAndCallback {
-		for i := count; i > 0; i -= rangeLines {
-
+	for _, line := range rangeLines {
+		end := i + line
+		if end > count { // Проверяем границы
+			end = count
 		}
-
-		buttonsLine[i] = InlineKeyboardButton{Text: text, CallbackData: callback}
-		if i == rangeLines-1 {
-
-			buttons.RowsKeyboard = append(buttons.RowsKeyboard, buttonsLine)
-			buttonsLine = make([]InlineKeyboardButton, rangeLines)
-		}
+		result.RowsKeyboard = append(result.RowsKeyboard, buttonsTextAndCallback[i:end])
+		i = end
 	}
 
-	replyMarkup, err := json.Marshal(buttons)
+	replyMarkup, err := json.Marshal(result)
 	if err != nil {
 		return e.Wrap("failed to marshal buttons: %w", err)
 	}
 
 	q := url.Values{}
 	q.Add("chat_id", strconv.Itoa(chatID))
-	q.Add("text", "buttonsTextAndCallback")
+	q.Add("text", topMessage)
 	q.Add("reply_markup", string(replyMarkup))
 
 	_, err = c.doRequest(sendMessageMethod, q)

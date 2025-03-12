@@ -8,6 +8,7 @@ import (
 	"net/url"
 	"strings"
 
+	"github.com/Gipohub/goTgBot/clients/tgClient"
 	"github.com/Gipohub/goTgBot/clients/ytClient"
 	"github.com/Gipohub/goTgBot/lib/e"
 	"github.com/Gipohub/goTgBot/storage"
@@ -130,14 +131,18 @@ func (p *Processor) SendList(chatID int, username string) (err error) {
 }
 
 func (p *Processor) SendHelp(chatID int) error {
-	var err error
-	if err = p.tg.SendMesages(chatID, msgHelp); err == nil {
-		return p.tg.SendButtons(chatID, map[string]string{"send random": "/rnd", "sasend random": "/rnd", "ssend random": "/rnd", "send list": "/list", "exit": "/exit"}, 2)
 
-	}
-	return err
+	res := []tgClient.InlineButton{{Text: "send1 random", CallbackData: "/rnd"},
+		{Text: "send list", CallbackData: "/list"},
+		{Text: "send2 random", CallbackData: "/rnd"},
+		{Text: "send3 random", CallbackData: "/rnd"},
+		{Text: "send4 random", CallbackData: "/rnd"},
+		{Text: "send5 random", CallbackData: "/rnd"},
+		{Text: "send6 random", CallbackData: "/rnd"}}
 
+	return p.tg.SendButtons(chatID, msgHelp, res, []int{1, 2, 1, 3})
 }
+
 func (p *Processor) SendHello(chatID int) error {
 	return p.tg.SendMesages(chatID, msgHello)
 }

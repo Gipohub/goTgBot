@@ -44,17 +44,16 @@ type Message struct {
 	Chat Chat `json:"chat"`
 }
 
-//type CallbackFrom struct {
-//	ID       int    `json:"id"`
-//	UserName string `json:"username"`
-//}
+// type buttonsTextAndCallback struct {
+// 	Text string
+// }
 
 // Структура для inline-кнопок
 type InlineKeyboard struct {
-	RowsKeyboard [][]InlineKeyboardButton `json:"inline_keyboard"`
+	RowsKeyboard [][]InlineButton `json:"inline_keyboard"`
 }
 
-type InlineKeyboardButton struct {
+type InlineButton struct {
 	Text         string `json:"text"`
 	CallbackData string `json:"callback_data"`
 }
