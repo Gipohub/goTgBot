@@ -15,7 +15,6 @@ import (
 
 const (
 	tgBotHost = "api.telegram.org"
-	//storagePath = "storage"
 	batchSize = 100
 )
 const (
@@ -26,7 +25,7 @@ const (
 
 func main() {
 	sqliteStoragePath := filepath.Join(dataBasePathPart1, dataBasePathPart2, filename)
-	//tgClient := tgClient.New(tgBotHost, mustToken())
+
 	sqliteStorage, err := sqlite.New(sqliteStoragePath)
 	if err != nil {
 		log.Fatal("cant connect storage", err)

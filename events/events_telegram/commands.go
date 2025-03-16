@@ -9,7 +9,7 @@ import (
 	"strings"
 
 	"github.com/Gipohub/goTgBot/clients/tgClient"
-	"github.com/Gipohub/goTgBot/clients/ytClient"
+	//"github.com/Gipohub/goTgBot/clients/ytClient"
 	"github.com/Gipohub/goTgBot/lib/e"
 	"github.com/Gipohub/goTgBot/storage"
 )
@@ -18,9 +18,9 @@ const (
 	RndCmd   = "/rnd"
 	HelpCmd  = "/help"
 	StartCmd = "/start"
-	Parser   = "/pars"
-	ListCmd  = "/list"
-	Exit     = "/exit"
+	//Parser   = "/pars"
+	ListCmd = "/list"
+	Exit    = "/exit"
 )
 
 func (p *Processor) doCmd(text string, chatID int, username string) error {
@@ -147,10 +147,10 @@ func (p *Processor) SendHello(chatID int) error {
 	return p.tg.SendMesages(chatID, msgHello)
 }
 
-func (p *Processor) SendParsRes(chatID int) error {
-	ytClient.Pars()
-	return p.tg.SendMesages(chatID, "pars")
-}
+// func (p *Processor) SendParsRes(chatID int) error {
+// 	ytClient.Pars()
+// 	return p.tg.SendMesages(chatID, "pars")
+// }
 
 func (p *Processor) isOwner(username string) bool {
 	return p.tg.GetOwner() == username

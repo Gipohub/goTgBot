@@ -62,9 +62,7 @@ func (p *Processor) Fetch(limit int) ([]events.Event, error) {
 // разные сценарии действия в зависимости от типа эвента
 func (p *Processor) Process(event events.Event) error {
 	switch event.Type {
-	case events.Message:
-		return p.processMessage(event)
-	case events.Callback:
+	case events.Message, events.Callback:
 		return p.processMessage(event)
 	default:
 		return e.Wrap("cant process mesage", ErrUnknownEventType)

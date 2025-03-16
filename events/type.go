@@ -1,5 +1,7 @@
 package events
 
+import "context"
+
 type Fetcher interface {
 	Fetch(limit int) ([]Event, error)
 }
@@ -20,4 +22,9 @@ type Event struct {
 	Type Type
 	Text string
 	Meta any
+}
+
+type RoutineData struct {
+	channel *chan Event
+	context *context.Context
 }

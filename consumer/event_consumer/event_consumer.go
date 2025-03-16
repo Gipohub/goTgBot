@@ -10,6 +10,7 @@ import (
 type Consumer struct {
 	fetcher   events.Fetcher
 	processor events.Processor
+	data      events.RoutineData
 	batchSize int
 }
 
@@ -38,6 +39,7 @@ func (c Consumer) Start() error {
 
 		if err := c.handleEvents(gotEvents); err != nil {
 			log.Print(err)
+			//TODO: probably rudiment
 			if err.Error() == "cant handle event: cnt prcss mssage: Exit" {
 				return err
 			}
