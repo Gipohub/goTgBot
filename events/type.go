@@ -21,10 +21,16 @@ const (
 type Event struct {
 	Type Type
 	Text string
-	Meta any
+	//Meta any
+	Meta Meta
+}
+
+type Meta struct {
+	ChatID   int
+	UserName string
 }
 
 type RoutineData struct {
-	channel *chan Event
-	context *context.Context
+	Channel chan Event
+	Context context.Context
 }

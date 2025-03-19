@@ -5,12 +5,13 @@ import (
 	"time"
 
 	"github.com/Gipohub/goTgBot/events"
+	"github.com/Gipohub/goTgBot/lib/e"
 )
 
 type Consumer struct {
 	fetcher   events.Fetcher
 	processor events.Processor
-	data      events.RoutineData
+
 	batchSize int
 }
 
@@ -53,9 +54,11 @@ func (c *Consumer) handleEvents(events []events.Event) error {
 	for _, event := range events {
 		log.Printf("got new event: %s", event.Text)
 
+		//go func(ev events.Event) {
 		if err := c.processor.Process(event); err != nil {
-			log.Printf("cant handle event: %s", err.Error())
+			return e.Wrap("cant handle event: %s", err)
 		}
+		//}(event)
 	}
 	return nil
 }
