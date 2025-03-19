@@ -122,6 +122,7 @@ func (p *Processor) userState(data events.RoutineData) {
 			delete(p.monitor, userName) // Удаляем юзера из монитора
 			p.mu.Unlock()
 		}
+		close(data.Channel)
 	}()
 	i := 0
 	for {
