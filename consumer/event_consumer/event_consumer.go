@@ -39,8 +39,7 @@ func (c Consumer) Start() error {
 		}
 
 		if err := c.handleEvents(gotEvents); err != nil {
-			log.Print(err)
-			//TODO: probably rudiment
+			//log.Print(err)
 			if err.Error() == "cant handle event: cnt prcss mssage: Exit" {
 				return err
 			}

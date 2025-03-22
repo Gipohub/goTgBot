@@ -3,71 +3,13 @@ package events_telegram
 import (
 	"context"
 	"errors"
-	"fmt"
-	"log"
 	"net/url"
-	"strings"
 
 	"github.com/Gipohub/goTgBot/clients/tgClient"
 	//"github.com/Gipohub/goTgBot/clients/ytClient"
 	"github.com/Gipohub/goTgBot/lib/e"
 	"github.com/Gipohub/goTgBot/storage"
 )
-
-const (
-	RndCmd   = "/rnd"
-	HelpCmd  = "/help"
-	StartCmd = "/start"
-	//Parser   = "/pars"
-	ListCmd = "/list"
-	Exit    = "/exit"
-)
-
-func (p *Processor) doCmd(text string, chatID int, username string) error {
-	text = strings.TrimSpace(text)
-
-	log.Printf("got new comma '%s' from '%s'", text, username)
-
-	if isSaveCmd(text) {
-		return p.savePage(text, chatID, username)
-	}
-
-	switch text {
-	case RndCmd:
-		fmt.Println("rnd msg")
-
-		return p.SendRandom(chatID, username)
-	case HelpCmd:
-		fmt.Println("help msg")
-
-		return p.SendHelp(chatID)
-	//case SaveCmd:
-	case StartCmd:
-		fmt.Println("start msg")
-
-		return p.SendHello(chatID)
-	case ListCmd:
-		fmt.Println("list msg")
-		return p.SendList(chatID, username)
-	//case Parser:
-	//	fmt.Println("pars msg")
-	//	return p.SendParsRes(chatID)
-	case Exit:
-		fmt.Println("exit msg")
-		if p.isOwner(username) {
-			if err := p.tg.SendMesages(chatID, msgTurnedOff); err != nil {
-				return err
-			}
-			log.Fatal("service is stopped")
-		}
-		return p.tg.SendMesages(chatID, msgAccessDenied)
-
-	default:
-		fmt.Println("unknown msg")
-		return p.tg.SendMesages(chatID, msgUnknownCommand)
-	}
-
-}
 
 func (p *Processor) savePage(pageURL string, chatID int, username string) (err error) {
 	defer func() { err = e.Wrap("cant do command: save page", err) }()

@@ -126,7 +126,7 @@ func (s *Storage) IsExists(ctx context.Context, page *storage.Page) (bool, error
 }
 
 func (s *Storage) Init(ctx context.Context) error {
-	q := `CREATE TABLE IF NOT EXISTS pages (url TEXT, user_name TEXT)`
+	q := `CREATE TABLE IF NOT EXISTS pages (url TEXT, path TEXT,user_name TEXT)`
 	_, err := s.db.ExecContext(ctx, q)
 	if err != nil {
 		return e.Wrap(CreateTableErr, err)
