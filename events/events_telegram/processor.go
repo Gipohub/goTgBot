@@ -26,18 +26,11 @@ var (
 )
 
 func New(client *tgClient.Client, storage storage.Storage) *Processor {
-	// d := make(map[string]events.RoutineData)
-	// c := make(chan events.Event)
-	// ctx, cancel:= context.WithCancel(context.Background())
-	// d["sem"] =  events.RoutineData{channel: c,
-	// context: &ctx}
 	p := &Processor{
 		tg:      client,
 		storage: storage,
 		monitor: make(map[string]events.RoutineData),
-		//data: d,
 	}
-	//go p.Start(p)
 
 	return p
 
@@ -66,27 +59,28 @@ func (p *Processor) doCmd(text string, chatID int, username string) error {
 		fmt.Println("rnd msg")
 
 		return p.SendRandom(chatID, username)
+
 	case HelpCmd:
 		fmt.Println("help msg")
 
 		return p.SendHelp(chatID)
-	//case SaveCmd:
+
 	case StartCmd:
 		fmt.Println("start msg")
 
 		return p.SendHello(chatID)
+
 	case ListCmd:
 		fmt.Println("list msg")
 		return p.SendList(chatID, username)
-	//case Parser:
-	//	fmt.Println("pars msg")
-	//	return p.SendParsRes(chatID)
+
 	case Exit:
 		fmt.Println("exit msg")
 		if p.isOwner(username) {
 			if err := p.tg.SendMesages(chatID, msgTurnedOff); err != nil {
 				return err
 			}
+			//turned off
 			log.Fatal("service is stopped")
 		}
 		return p.tg.SendMesages(chatID, msgAccessDenied)

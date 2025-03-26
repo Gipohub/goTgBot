@@ -2,7 +2,6 @@ package events_telegram
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"time"
 
@@ -39,6 +38,7 @@ func (p *Processor) processMessage(event events.Event) error {
 	p.mu.Unlock()
 	return nil
 }
+
 func (p *Processor) userState(data events.RoutineData) {
 	timer := time.NewTimer(5 * time.Minute) // Запускаем таймер
 	var userName string
@@ -54,7 +54,7 @@ func (p *Processor) userState(data events.RoutineData) {
 	i := 0
 	for {
 		i++
-		fmt.Printf("%v'nd event on session", i)
+		log.Printf("%v'nd event on session", i)
 		select {
 		case nE := <-data.Channel:
 			// Продлеваем на 5 минут
@@ -63,7 +63,7 @@ func (p *Processor) userState(data events.RoutineData) {
 			userName = nE.Meta.UserName
 
 			if err := p.doCmd(nE.Text, nE.Meta.ChatID, nE.Meta.UserName); err != nil {
-				log.Printf("cnt prcss mssage in processMessage: %s", err)
+				log.Printf("cnt doCmd mssage in userState: %s", err)
 			}
 
 		case <-data.Context.Done():
