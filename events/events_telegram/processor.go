@@ -13,11 +13,12 @@ import (
 )
 
 type Processor struct {
-	tg      *tgClient.Client
-	offset  int
-	storage storage.Storage
-	monitor map[string]events.RoutineData
-	mu      sync.Mutex
+	tg                *tgClient.Client
+	offset            int
+	storage           storage.Storage
+	activeUserSession map[string]events.RoutineData
+	commandList       map[string]func(text string, chatID int, username string) error
+	mu                sync.Mutex
 }
 
 var (
@@ -27,9 +28,9 @@ var (
 
 func New(client *tgClient.Client, storage storage.Storage) *Processor {
 	p := &Processor{
-		tg:      client,
-		storage: storage,
-		monitor: make(map[string]events.RoutineData),
+		tg:                client,
+		storage:           storage,
+		activeUserSession: make(map[string]events.RoutineData),
 	}
 
 	return p

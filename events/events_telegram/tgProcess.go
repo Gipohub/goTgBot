@@ -22,14 +22,14 @@ func (p *Processor) Process(event events.Event) error {
 // check or create active user session and them do message process
 func (p *Processor) processMessage(event events.Event) error {
 	p.mu.Lock()
-	rData, exists := p.monitor[event.Meta.UserName]
+	rData, exists := p.activeUserSession[event.Meta.UserName]
 	if !exists {
 		ch := make(chan events.Event, 10)
 		initState := events.RoutineData{
 			Channel: ch,
 			Context: context.TODO(), ////TODO manage ctx with db request
 		}
-		p.monitor[event.Meta.UserName] = initState
+		p.activeUserSession[event.Meta.UserName] = initState
 		go p.userState(initState)
 		ch <- event
 	} else {
@@ -47,11 +47,13 @@ func (p *Processor) userState(data events.RoutineData) {
 		timer.Stop()
 		if len(userName) > 0 {
 			p.mu.Lock()
-			delete(p.monitor, userName) // Удаляем юзера из монитора
+			// Удаляем юзера из списка активных сессий
+			delete(p.activeUserSession, userName)
 			p.mu.Unlock()
 		}
 		close(data.Channel)
 	}()
+
 	i := 0
 	for {
 		i++

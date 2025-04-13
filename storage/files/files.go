@@ -13,7 +13,7 @@ import (
 	"github.com/Gipohub/goTgBot/storage"
 )
 
-type Storage struct {
+type FileStorage struct {
 	basePath string
 }
 
@@ -23,16 +23,12 @@ const defaultPerm = 0774
 // ошибка в переменной чтобы её ?можно было проверить снаружи?
 // например чтобы сказать пользователю что ничего не сохранено пока
 
-func New(basePath string) Storage {
-	return Storage{basePath: basePath}
+func New(basePath string) FileStorage {
+	return FileStorage{basePath: basePath}
 }
 
-//func (s Storage) Pars() {
-//	ytClient.Pars()
-//}
-
 // сохранение файла
-func (s Storage) Save(page *storage.Page) (err error) {
+func (s FileStorage) Save(page *storage.Page) (err error) {
 	//определяем способ обработки ошибок
 	defer func() { e.Wrap("cant save page", err) }()
 
@@ -71,7 +67,7 @@ func (s Storage) Save(page *storage.Page) (err error) {
 	return nil
 }
 
-func (s Storage) PickRandom(userName string) (page *storage.Page, err error) {
+func (s FileStorage) PickRandom(userName string) (page *storage.Page, err error) {
 	defer func() { e.Wrap("cant save page", err) }()
 
 	path := filepath.Join(s.basePath, userName)
@@ -93,7 +89,7 @@ func (s Storage) PickRandom(userName string) (page *storage.Page, err error) {
 	return s.decodePage(filepath.Join(path, file.Name()))
 }
 
-func (s Storage) Remove(p *storage.Page) error {
+func (s FileStorage) Remove(p *storage.Page) error {
 	fileName, err := fileName(p)
 	if err != nil {
 		return e.Wrap("cant remove file", err)
@@ -109,7 +105,7 @@ func (s Storage) Remove(p *storage.Page) error {
 	return nil
 }
 
-func (s Storage) IsExists(p *storage.Page) (bool, error) {
+func (s FileStorage) IsExists(p *storage.Page) (bool, error) {
 	fileName, err := fileName(p)
 	if err != nil {
 		return false, e.Wrap("cant check if file exsists", err)
@@ -129,7 +125,7 @@ func (s Storage) IsExists(p *storage.Page) (bool, error) {
 	return true, nil
 }
 
-func (s Storage) decodePage(filePath string) (*storage.Page, error) {
+func (s FileStorage) decodePage(filePath string) (*storage.Page, error) {
 	f, err := os.Open(filePath)
 	if err != nil {
 		return nil, e.Wrap("cant decode page", err)

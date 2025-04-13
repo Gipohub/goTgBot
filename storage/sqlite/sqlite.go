@@ -6,6 +6,7 @@ import (
 
 	"github.com/Gipohub/goTgBot/lib/e"
 	"github.com/Gipohub/goTgBot/storage"
+	"github.com/Gipohub/goTgBot/storage/files"
 	_ "github.com/glebarez/go-sqlite"
 )
 
@@ -20,7 +21,8 @@ const (
 )
 
 type Storage struct {
-	db *sql.DB
+	db          *sql.DB
+	fileStorage files.FileStorage
 }
 
 // New creates new SQLite storage.
@@ -34,7 +36,9 @@ func New(path string) (*Storage, error) {
 		return nil, e.Wrap(CnnctDbErr, err)
 	}
 
-	return &Storage{db: db}, nil
+	fs := files.New(path)
+
+	return &Storage{db: db, fileStorage: fs}, nil
 }
 
 // Save saves page to storage.
