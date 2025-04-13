@@ -2,7 +2,7 @@ package atom
 
 type inData interface {
 	Show()
-	Description()
+	Description() string
 	Add()
 	Delite()
 	Complite()

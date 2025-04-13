@@ -47,19 +47,20 @@ const (
 )
 
 func (p *Processor) doCmd(text string, chatID int, username string) error {
+
 	text = strings.TrimSpace(text)
 
 	log.Printf("got new comma '%s' from '%s'", text, username)
 
-	if isSaveCmd(text) {
-		return p.savePage(text, chatID, username)
-	}
+	// if isSaveCmd(text) {
+	// 	return p.savePage(text, chatID, username)
+	// }
 
 	switch text {
-	case RndCmd:
-		fmt.Println("rnd msg")
+	// case RndCmd:
+	// 	fmt.Println("rnd msg")
 
-		return p.SendRandom(chatID, username)
+	// 	return p.SendRandom(chatID, username)
 
 	case HelpCmd:
 		fmt.Println("help msg")
@@ -71,9 +72,9 @@ func (p *Processor) doCmd(text string, chatID int, username string) error {
 
 		return p.SendHello(chatID)
 
-	case ListCmd:
-		fmt.Println("list msg")
-		return p.SendList(chatID, username)
+	// case ListCmd:
+	// 	fmt.Println("list msg")
+	// 	return p.SendList(chatID, username)
 
 	case Exit:
 		fmt.Println("exit msg")
@@ -87,8 +88,18 @@ func (p *Processor) doCmd(text string, chatID int, username string) error {
 		return p.tg.SendMesages(chatID, msgAccessDenied)
 
 	default:
-		fmt.Println("unknown msg")
-		return p.tg.SendMesages(chatID, msgUnknownCommand)
+
+		if com, exists := p.commandList[text]; !exists {
+			fmt.Println("unknown msg")
+			return p.tg.SendMesages(chatID, msgUnknownCommand)
+		} else {
+			if err := com(text, chatID, username); err != nil {
+				log.Printf("cnt do message in doCmd: %s", err)
+				return err
+			}
+			return nil
+		}
+
 	}
 
 }
