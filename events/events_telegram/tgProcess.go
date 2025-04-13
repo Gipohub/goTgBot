@@ -42,6 +42,7 @@ func (p *Processor) processMessage(event events.Event) error {
 func (p *Processor) userState(data events.RoutineData) {
 	timer := time.NewTimer(5 * time.Minute) // Запускаем таймер
 	var userName string
+
 	defer func() {
 		timer.Stop()
 		if len(userName) > 0 {

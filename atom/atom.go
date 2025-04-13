@@ -1,8 +1,16 @@
 package atom
 
+type inData interface {
+	Show()
+	Description()
+	Add()
+	Delite()
+	Complite()
+}
+
 type Atom struct {
-	inter []Atom
-	data  any
+	inter  []Atom
+	inData inData
 }
 
 func New() Atom {
