@@ -1,6 +1,10 @@
 package events
 
-import "context"
+import (
+	"context"
+
+	"github.com/Gipohub/goTgBot/atom"
+)
 
 type Fetcher interface {
 	Fetch(limit int) ([]Event, error)
@@ -31,6 +35,7 @@ type Meta struct {
 }
 
 type RoutineData struct {
-	Channel chan Event
-	Context context.Context
+	Channel       chan Event
+	Context       context.Context
+	SessionScript atom.Atom
 }
