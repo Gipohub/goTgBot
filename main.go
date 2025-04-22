@@ -38,10 +38,13 @@ func main() {
 
 	token, owner := mustToken()
 
-	eventsProcessor := events_telegram.New(
+	eventsProcessor, err := events_telegram.New(
 		tgClient.New(tgBotHost, token, owner),
 		sqliteStorage,
 	)
+	if err != nil {
+		log.Print("service processor have a problem") //TODO err
+	}
 
 	log.Print("service started")
 

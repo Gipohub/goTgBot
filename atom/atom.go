@@ -6,6 +6,7 @@ type inData interface {
 	Add()
 	Delite()
 	Complite()
+	Do()
 }
 
 type Atom struct {

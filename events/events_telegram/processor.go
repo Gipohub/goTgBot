@@ -10,6 +10,10 @@ import (
 	"github.com/Gipohub/goTgBot/clients/tgClient"
 	"github.com/Gipohub/goTgBot/events"
 	"github.com/Gipohub/goTgBot/storage"
+
+	linksaver "github.com/Gipohub/linksaver/proto"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 )
 
 type Processor struct {
@@ -19,6 +23,7 @@ type Processor struct {
 	activeUserSession map[string]events.RoutineData
 	commandList       map[string]func(text string, chatID int, username string) error
 	mu                sync.Mutex
+	linker            linksaver.LinkSaverClient
 }
 
 var (
@@ -26,14 +31,22 @@ var (
 	ErrUnknownMetaType  = errors.New("unknown meta type")
 )
 
-func New(client *tgClient.Client, storage storage.Storage) *Processor {
+func New(client *tgClient.Client, storage storage.Storage) (*Processor, error) {
+
+	conn, err := grpc.NewClient("localhost:50051", grpc.WithTransportCredentials(insecure.NewCredentials()))
+	if err != nil {
+		return nil, err
+	}
+	rpcClient := linksaver.NewLinkSaverClient(conn)
+
 	p := &Processor{
 		tg:                client,
 		storage:           storage,
 		activeUserSession: make(map[string]events.RoutineData),
+		linker:            rpcClient,
 	}
 
-	return p
+	return p, nil
 
 }
 
@@ -52,15 +65,16 @@ func (p *Processor) doCmd(text string, chatID int, username string) error {
 
 	log.Printf("got new comma '%s' from '%s'", text, username)
 
-	// if isSaveCmd(text) {
-	// 	return p.savePage(text, chatID, username)
-	// }
+	if isSaveCmd(text) {
+		log.Printf("i am in issavecmd ")
+		return p.savePage(text, chatID, username)
+	}
 
 	switch text {
-	// case RndCmd:
-	// 	fmt.Println("rnd msg")
+	case RndCmd:
+		fmt.Println("rnd msg")
 
-	// 	return p.SendRandom(chatID, username)
+		return p.SendRandom(chatID, username)
 
 	case HelpCmd:
 		fmt.Println("help msg")
@@ -72,9 +86,9 @@ func (p *Processor) doCmd(text string, chatID int, username string) error {
 
 		return p.SendHello(chatID)
 
-	// case ListCmd:
-	// 	fmt.Println("list msg")
-	// 	return p.SendList(chatID, username)
+	case ListCmd:
+		fmt.Println("list msg")
+		return p.SendList(chatID, username)
 
 	case Exit:
 		fmt.Println("exit msg")
