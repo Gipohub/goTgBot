@@ -9,11 +9,10 @@ import (
 
 	"github.com/Gipohub/goTgBot/clients/tgClient"
 	"github.com/Gipohub/goTgBot/events"
+	"github.com/Gipohub/goTgBot/lib/grpcCommand"
 	"github.com/Gipohub/goTgBot/storage"
 
 	linksaver "github.com/Gipohub/linksaver/proto"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials/insecure"
 )
 
 type Processor struct {
@@ -31,12 +30,15 @@ var (
 	ErrUnknownMetaType  = errors.New("unknown meta type")
 )
 
+const connectionAddress = "localhost:50051"
+
 func New(client *tgClient.Client, storage storage.Storage) (*Processor, error) {
 
-	conn, err := grpc.NewClient("localhost:50051", grpc.WithTransportCredentials(insecure.NewCredentials()))
+	conn, err := grpcCommand.ConnectToServer(connectionAddress)
 	if err != nil {
 		return nil, err
 	}
+
 	rpcClient := linksaver.NewLinkSaverClient(conn)
 
 	p := &Processor{
